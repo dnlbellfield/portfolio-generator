@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add any custom CSS rules below the Tailwind directives */
+
+/* Example: Define a CSS variable if you want to use your dynamic font */
+/* :root {
+    --portfolio-font: sans-serif; // Default value
+}
+body {
+     font-family: var(--portfolio-font);
+}
+*/
+
+/* You can keep the original style tag in your Blade for the dynamic font variable */
+/* or set the font-family using Blade inline style directly on the body */
+/* body style="font-family: {{ $portfolio->font_basic ?? 'sans-serif' }};" */
