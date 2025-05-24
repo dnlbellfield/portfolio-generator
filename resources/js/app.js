@@ -7,7 +7,7 @@ const addOnlinePresenceBtn = document.getElementById('add-online-presence-btn');
 const onlinePresenceEntrySelector = '.online-presence-entry';
 const onlinePresenceSectionName = 'online_presences';
 const onlinePresenceIdPrefix = 'online_presences';
-const onlinePresenceHeadingPrefix = 'Link'; // Or whatever you want the heading to be
+const onlinePresenceHeadingPrefix = 'Link';  
 
 
 
@@ -66,6 +66,130 @@ const paragraphImageBlockTemplate = `
 
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function () {
+
+  // --- Preview Area Elements for First 6 Sections ---
+const personalInfoPreviewContent = document.getElementById('personal-info-preview').querySelector('.preview-content');
+const aboutMePreviewContent = document.getElementById('about-me-preview').querySelector('.preview-content');
+const onlinePresencePreviewContent = document.getElementById('online-presence-preview').querySelector('.preview-content');
+const contactPreviewContent = document.getElementById('contact-preview').querySelector('.preview-content');
+const appearancePreviewContent = document.getElementById('appearance-preview').querySelector('.preview-content');
+const skillsPreviewContent = document.getElementById('skills-preview').querySelector('.preview-content');
+// --- Section-Specific Preview Generation Functions ---
+
+function generatePersonalInfoPreview() {
+    const name = document.getElementById('name').value;
+    const jobTitle = document.getElementById('job_title').value;
+    const landingPageSummary = document.getElementById('landing_page_summary').value;
+    // Profile picture preview is handled by setupImagePreview
+
+    let previewHtml = '';
+    if (name || jobTitle || landingPageSummary || document.getElementById('profile_picture').files.length > 0) { // Only show if there's some content
+         previewHtml += `
+             <section> {{-- Basic section wrapper for preview --}}
+                  ${document.getElementById('profile-picture-preview') && document.getElementById('profile-picture-preview').src ? `<img src="${document.getElementById('profile-picture-preview').src}" alt="Profile Picture Preview" class="preview-placeholder-img" style="max-width: 80px; border-radius: 50%; margin-bottom: 10px;">` : ''} {{-- Use placeholder img src --}}
+                 <h3>${name || 'Your Name'}</h3>
+                 ${jobTitle ? `<p>${jobTitle}</p>` : ''}
+                 ${landingPageSummary ? `<p>${landingPageSummary}</p>` : ''}
+                 {{-- Online Presence links will be in their own preview section --}}
+             </section>
+         `;
+    }
+    personalInfoPreviewContent.innerHTML = previewHtml;
+}
+
+function generateAboutMePreview() {
+    const aboutMeHeading = document.getElementById('about_me_heading').value;
+    const aboutMeContent = document.getElementById('about_me_content').value;
+    // Second about image preview is handled by setupImagePreview
+
+     let previewHtml = '';
+     if (aboutMeHeading || aboutMeContent || document.getElementById('about_image').files.length > 0) { // Only show if there's some content
+         previewHtml += `
+             <section>
+                 <h2>${aboutMeHeading || 'About Me'}</h2>
+                 ${aboutMeContent ? `<p>${aboutMeContent}</p>` : ''}
+                 ${document.getElementById('about-image-preview') && document.getElementById('about-image-preview').src ? `<img src="${document.getElementById('about-image-preview').src}" alt="About Image Preview" class="preview-placeholder-img" style="max-width: 150px; margin-top: 10px;">` : ''} {{-- Use placeholder img src --}}
+             </section>
+         `;
+     }
+    aboutMePreviewContent.innerHTML = previewHtml;
+}
+
+ function generateOnlinePresencePreview() {
+     const links = [];
+     document.querySelectorAll('#online-presence-entries .online-presence-entry').forEach(entry => {
+         const label = entry.querySelector('input[name$="[label]"]').value;
+         const url = entry.querySelector('input[name$="[url]"]').value;
+          if (label || url) { // Only include if there's some content
+             links.push({ label: label, url: url });
+         }
+     });
+
+      let previewHtml = '';
+      if (links.length > 0) { // Only show section if there are links
+          previewHtml += `
+              <section>
+                  <h2>Online Presence</h2>
+                  <div class="space-x-4"> {{-- Tailwind spacing --}}
+                       ${links.map(link => `<a href="${link.url}" target="_blank">${link.label || link.url}</a>`).join(' ')}
+                  </div>
+              </section>
+          `;
+      }
+     onlinePresencePreviewContent.innerHTML = previewHtml;
+ }
+
+ function generateContactPreview() {
+     const contactHeading = document.getElementById('contact_heading').value;
+     const email = document.getElementById('email').value; // Email is in Personal Info form section
+
+      let previewHtml = '';
+      if (contactHeading || email) { // Only show if there's some content
+          previewHtml += `
+              <section>
+                  <h2>${contactHeading || 'Get in Touch'}</h2>
+                   ${email ? `<p>Email: <a href="mailto:${email}">${email}</a></p>` : ''}
+                  {{-- Note: Online Presence links are in their own preview section --}}
+              </section>
+          `;
+      }
+     contactPreviewContent.innerHTML = previewHtml;
+ }
+
+  function generateAppearancePreview() {
+      const portfolioTitle = document.getElementById('portfolio_title').value;
+      // Theme and font are not form inputs yet
+
+       let previewHtml = '';
+       if (portfolioTitle) { // Only show if there's a title
+           previewHtml += `
+               <section>
+                    <h3>Appearance Info</h3>
+                    <p>Browser Title: ${portfolioTitle}</p>
+               </section>
+           `;
+       }
+      appearancePreviewContent.innerHTML = previewHtml;
+  }
+
+   function generateSkillsPreview() {
+       const skillsHeading = document.getElementById('skills_heading').value;
+       const skillsList = document.getElementById('skills_list').value;
+
+        let previewHtml = '';
+        if (skillsList) { // Only show if skills list has content
+            // You might adapt the show page logic here to split the string and display as pills
+             previewHtml += `
+                <section>
+                    <h2>${skillsHeading || 'Skills'}</h2>
+                    <p>${skillsList}</p> {{-- Basic display as text --}}
+                </section>
+             `;
+        }
+       skillsPreviewContent.innerHTML = previewHtml;
+   }
+
+
     // --- Portfolio Preview Logic ---
     const portfolioForm = document.getElementById('portfolio-form');
     const portfolioPreviewContent = document.getElementById('portfolio-preview').querySelector('.preview-content');
@@ -384,63 +508,29 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Function to setup image previews for dynamically added image inputs
-     function setupDynamicImagePreviews() {
-         // Find all file inputs within repeatable sections and custom blocks that don't have a listener yet
-         portfolioForm.querySelectorAll('input[type="file"]:not([data-preview-listener])').forEach(fileInput => {
-             let previewImgElement = null;
-             const inputName = fileInput.getAttribute('name');
+// --- Setup Image Previews for Specific Placeholder Img Tags ---
+// This links file inputs to specific, pre-existing img tags in the preview column.
+function setupImagePreviewLinks() {
+     const profilePictureInput = document.getElementById('profile_picture');
+     const aboutImageInput = document.getElementById('about_image');
 
-             // Logic to find the corresponding preview image element based on the file input's name/ID pattern
-             // This requires careful matching of the form input to the dynamically generated preview HTML structure.
+     // Ensure you have these placeholder img tags in your create.blade.php preview column HTML
+     // They should be within the relevant section's preview area.
+     // <img id="profile-picture-preview" src="" alt="Profile Picture Preview" class="preview-placeholder-img">
+     // <img id="about-image-preview" src="" alt="About Image Preview" class="preview-placeholder-img">
 
-              if (inputName === 'profile_picture') {
-                  previewImgElement = document.getElementById('profile-picture-preview');
-              } else if (inputName === 'about_image') {
-                  previewImgElement = document.getElementById('about-image-preview');
-              } else if (inputName.startsWith('projects[') && inputName.endsWith('[image]')) {
-                  // Find the corresponding project entry in the preview using its index
-                  const indexMatch = inputName.match(/projects\[(\d+)\]\[image\]/);
-                   if (indexMatch && indexMatch[1]) {
-                       const index = indexMatch[1];
-                        // Find the project entry in the preview (need a way to identify them)
-                       // Add a data attribute to project preview divs like data-index="${index}" in your updatePortfolioPreview HTML
-                       const projectPreviewDiv = portfolioPreviewContent.querySelector(`#projects .project-entry[data-index="${index}"]`);
-                       if (projectPreviewDiv) {
-                           previewImgElement = projectPreviewDiv.querySelector('.project-image-preview');
-                       }
-                   }
-              } else if (inputName.startsWith('custom_sections[') && inputName.endsWith('[content][image]')) {
-                  // Find the corresponding custom section and block in the preview
-                 const match = inputName.match(/custom_sections\[(\d+)\]\[blocks\]\[(\d+)\]\[content\]\[image\]/);
-                 if (match && match[1] && match[2]) {
-                     const sectionIndex = match[1];
-                     const blockIndex = match[2];
-                     // Find the custom section entry in the preview (need data-index)
-                     // Add data attributes or unique IDs to custom section/block preview divs
-                     const customSectionPreview = portfolioPreviewContent.querySelector(`#custom-section-${sectionIndex}`); // Need unique IDs or data attributes for custom sections in preview
-                     if (customSectionPreview) {
-                         // Find the custom section blocks container in the preview
-                         const blocksContainerPreview = customSectionPreview.querySelector('.custom-section-blocks'); // Need this class in preview HTML too
-                         if (blocksContainerPreview && blocksContainerPreview.children[blockIndex]) {
-                              // Find the block element in the preview
-                             const blockPreviewElement = blocksContainerPreview.children[blockIndex];
-                             if (blockPreviewElement.classList.contains('custom-block-image')) {
-                                  previewImgElement = blockPreviewElement.querySelector('.image-block-preview');
-                             } else if (blockPreviewElement.classList.contains('custom-block-paragraph-image')) {
-                                   previewImgElement = blockPreviewElement.querySelector('.paragraph-image-combo-preview');
-                             }
-                         }
-                     }
-                 }
-              }
+     const profilePicturePreview = document.getElementById('profile-picture-preview');
+     const aboutImagePreview = document.getElementById('about-image-preview');
 
+     setupImagePreview(profilePictureInput, profilePicturePreview);
+     setupImagePreview(aboutImageInput, aboutImagePreview);
 
-             if (previewImgElement) { // If a matching preview image element was found
-                 setupImagePreview(fileInput, previewImgElement); // Setup the listener
-                 fileInput.setAttribute('data-preview-listener', 'true'); // Mark the file input
-             }
-         });
-     }
+     // Note: Repeatable and Custom Section image previews are harder with this approach
+     // as the img tags are dynamically created within the preview HTML.
+     // A simpler approach might be needed for those or deferring their preview.
+     // Let's focus on single images for now.
+}
+
 
 
     // --- Initial Setup and Event Listeners ---
