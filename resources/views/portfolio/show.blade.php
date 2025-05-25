@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $portfolio->portfolio_title ?? $portfolio->name . "'s Portfolio" }}</title>
+    <title>{{   $portfolio->name . "'s Portfolio" }}</title>
 
     <!-- Standard SEO Meta Tags -->
     <meta name="author" content="{{ $portfolio->name }}">
@@ -201,60 +201,56 @@
 
     <main class="wrapper"> {{-- Optional wrapper if needed for overall layout --}}
 
-         {{-- Hero/Intro Section --}}
-         <section id="home" class="hero-section section-spacing bg-gray-50 flex items-center"> {{-- Added section-spacing, bg, flex, items-center --}}
-             <div class="container mx-auto px-4 py-8 max-w-7xl"> {{-- Responsive container, auto margins, padding, max-width --}}
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"> {{-- Responsive grid, gap, vertically center items --}}
-                   <div class="space-y-6"> {{-- Vertical space between elements --}}
+          {{-- Hero/Intro Section --}}
+         {{-- Added section-spacing, bg, flex, items-center --}}
+         <section id="home" class="hero-section section-spacing bg-gray-50 flex items-center relative"> {{-- Added relative to the section --}}
+             {{-- Responsive container, auto margins, padding, max-w --}}
+             {{-- Simplified structure for overlay on mobile --}}
+             <div class="container mx-auto px-0 lg:px-10 py-8 max-w-7xl w-full relative z-1 "> {{-- Reverted container classes --}}
+                 {{-- Use a grid for desktop, but simpler structure for mobile overlay --}}
+                 <div class="grid grid-cols-1 lg:grid-cols-2 lg:gap-12 items-center relative"> {{-- Added relative here --}}
 
-                       {{-- Dynamic Name Heading --}}
-                       @php
-                            $firstName = strtok($portfolio->name, ' ');
-                            $lastName = strtok('');
-                       @endphp
-                       <h1 class="dynamic-text font-bold relative z-10"
-                           data-first-name="{{ $firstName }}"
-                           data-last-name="{{ $lastName }}">
-                           {{ $firstName }} <br> {{ $lastName }} {{-- Display name broken into two lines --}}
-                       </h1>
+                     {{-- Profile Picture / Hero Image - Takes full width on mobile --}}
+                     {{-- Image container that will hold the image and the overlaid text --}}
+                     <div class="relative w-full lg:order-2 z-10"> {{-- Added w-full --}}
+                         @if ($portfolio->profile_picture_url)
+                             <img src="{{ asset('storage/' . $portfolio->profile_picture_url) }}"
+                                 alt="{{ $portfolio->name }} Profile Picture"
+                                 class="  shadow-xl w-full h-auto object-cover"> {{-- Kept h-auto for proportionality --}}
+                         @endif
+                     </div>
 
+                     {{-- Text content becomes a centered overlay within the image on mobile --}}
+                     {{-- Absolute positioning for overlay, Flexbox for centering --}}
+                     <div class="absolute inset-0 flex flex-col items-center justify-center z-20 p-4 text-center lg:static lg:space-y-6 lg:mx-auto lg:p-0 lg:rounded-none lg:inset-auto lg:bottom-auto lg:text-left "> {{-- Key styling changes here --}}
+                         {{-- Inner container for space-y and content alignment on mobile --}}
+                         <div class="space-y-6 w-full max-w-lg mx-auto lg:w-auto lg:max-w-none lg:mx-0 "> {{-- Added width and max-width for mobile containment --}}
 
-                       @if ($portfolio->job_title)
-                           <p class="text-3xl text-gray-700 ">{{ $portfolio->job_title }}</p> {{-- Font size, color --}}
-                       @endif
-                       @if ($portfolio->landing_page_summary)
-                            <p class="text-lg font-normal text-gray-600 max-w-xl ">{{ $portfolio->landing_page_summary }}</p> {{-- Font size, weight, color, max width --}}
-                       @endif
+                              {{-- Dynamic Name Heading --}}
+                              @php
+                                   $firstName = strtok($portfolio->name, ' ');
+                                   $lastName = strtok('');
+                              @endphp
+                              <h1 class="dynamic-text font-bold relative z-10 text-white lg:text-black"> {{-- Set text white on mobile --}}
+                                  {{ $firstName }} <br> {{ $lastName }} {{-- Display name broken into two lines --}}
+                              </h1>
 
-                       {{-- Learn More Button (Adapt href for your smooth scroll) --}}
-                       <a href="#about" class="inline-block px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-md no-underline mt-6"> {{-- Button styling, no underline --}}
-                           Learn More
-                       </a>
+                              @if ($portfolio->job_title)
+                                  <p class="text-3xl text-white lg:text-gray-700">{{ $portfolio->job_title }}</p> {{-- Set text white on mobile --}}
+                              @endif
+                              @if ($portfolio->landing_page_summary)
+                                  <p class="text-lg font-normal max-w-xl text-white lg:text-gray-600">{{ $portfolio->landing_page_summary }}</p> {{-- Set text white on mobile --}}
+                              @endif
 
-                         {{-- Online Presence Links (placed below Hero in this layout, spaced) --}}
-                         <div class="mt-6 flex flex-wrap gap-4 items-center"> {{-- Margin-top, flex container, wrap items, gap, vertically center --}}
-                             @forelse ($portfolio->onlinePresences as $link)
-                                  <a href="{{ $link->url }}" class="text-blue-600 hover:underline text-lg font-semibold no-underline" target="_blank"> {{-- Link styling, no underline --}}
-                                     {{ $link->label }}
-                                 </a>
-                             @empty
-                                  {{-- No online presence links added --}}
-                             @endforelse
+                              {{-- Learn More Button (Adapt href for your smooth scroll) --}}
+                              {{-- Button styling, no underline --}}
+                              <a href="#about" class="inline-block px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-md no-underline mt-6">
+                                  Learn More
+                              </a>
                          </div>
-                   </div>
-                   {{-- Profile Picture / Hero Image --}}
-                   <div class="relative max-w-2xl lg:max-w-lg mx-auto"> {{-- Relative positioning, max-width, centered --}}
-                       {{-- Optional: Add a background element like in your example --}}
-                       {{-- <div class="absolute inset-0 bg-gradient-to-tr from-gray-100 to-gray-300 rounded-3xl transform rotate-0"></div> --}}
-                       @if ($portfolio->profile_picture_url)
-                           <img src="{{ asset('storage/' . $portfolio->profile_picture_url) }}"
-                                alt="{{ $portfolio->name }} Profile Picture"
-                                style="width: 100%; height: auto; object-fit: cover;" {{-- Basic image sizing --}}
-                                class="relative rounded-3xl shadow-xl"> {{-- Relative, rounded, shadow --}}
-                       @endif
-                   </div>
-               </div>
-            </div>
+                     </div>
+                 </div>
+             </div>
          </section>
 
 
@@ -269,9 +265,9 @@
                          $skills = explode(',', $portfolio->skills_list);
                      @endphp
                      @if (!empty($skills))
-                         <div class="flex flex-wrap justify-center gap-3"> {{-- Flex container, wrap items, center justify, gap --}}
+                         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-5xl mx-auto px-6"> {{-- Flex container, wrap items, center justify, gap --}}
                              @foreach ($skills as $skill)
-                                 <span class="skill-tag inline-block bg-gray-100 text-gray-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-white hover:shadow-md transition-all duration-300"> {{-- Skill tag styling --}}
+                                 <span class="skill-tag inline-block bg-gray-100 text-gray-700 text-sm font-medium px-4 py-2 rounded-full hover:bg-white hover:shadow-md transition-all duration-30 w-80  w-full mx-auto text-center"> {{-- Skill tag styling --}}
                                      {{ trim($skill) }}
                                  </span>
                              @endforeach
@@ -282,41 +278,37 @@
          @endif
 
 
-         <!-- About Section -->
+          <!-- About Section -->
          @if ($portfolio->about_me_content)
              <section id="about" class="section-spacing bg-white">
-                 <div class="container mx-auto px-4 py-8 max-w-7xl">
-                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                         {{-- About Image (Desktop view - first column) --}}
+                 {{-- Container with horizontal padding for the whole section --}}
+                 <div class="container mx-auto px-4 lg:px-10 py-8 max-w-7xl">
+                     {{-- Use a grid with 2 columns for larger screens --}}
+                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+                         {{-- About Image (Desktop view - first column, takes full height) --}}
                          @if ($portfolio->about_image_url)
-                             <div class="order-2 lg:order-1 block"> {{-- Order for responsiveness --}}
+                             {{-- Reverted image container styling to be constrained on mobile --}}
+                             <div class="order-2 lg:order-1 block mx-auto max-w-xl lg:max-w-none flex justify-center lg:justify-start">
                                  <img src="{{ asset('storage/' . $portfolio->about_image_url) }}"
                                      alt="About Image"
-                                     style="width: 100%; height: auto; object-fit: cover;"
-                                     class="rounded-3xl shadow-xl max-w-lg mx-auto">
+                                     class=" shadow-xl w-full h-auto lg:h-full object-cover lg:max-w-none">
                              </div>
                          @endif
 
-                         {{-- About Me Info --}}
-                         <div class="order-1 lg:order-2 space-y-6"> {{-- Order for responsiveness, vertical space --}}
-                             <h2 class="text-4xl md:text-5xl font-bold border-b-2 border-blue-600 pb-2 mb-4"> {{-- Heading style --}}
+                         {{-- About Me Info (Desktop view - second column) --}}
+                         {{-- Added mx-auto and max-w-xl to constrain and center text on mobile, removed px-4 --}}
+                         <div class="order-1 lg:order-2 space-y-6 mx-auto max-w-xl"> {{-- Removed px-4 here --}}
+                             <h2 class="text-4xl md:text-5xl font-bold border-b-2 border-blue-600 pb-2 mb-4">
                                  {{ $portfolio->about_me_heading ?? 'About Me' }}
                              </h2>
-                             <p class="text-lg md:text-xl text-gray-700 leading-relaxed"> {{-- Paragraph style --}}
+                             <p class="text-lg md:text-xl text-gray-700 leading-relaxed">
                                  {{ $portfolio->about_me_content }}
                              </p>
 
                              {{-- Optional Buttons (Adapt hrefs if needed) --}}
-                             <div class="flex flex-wrap gap-4 mt-6"> {{-- Flex container, wrap items, gap, margin-top --}}
+                             <div class="flex flex-wrap gap-4 mt-6">
                                  {{-- Download Resume Button (Adapt URL) --}}
-                                 {{-- Assuming resume is uploaded as a file path in portfolio or similar --}}
-                                 {{-- @if ($portfolio->resume_path) --}} {{-- Example check if resume exists --}}
-                                     <a href="assets/pJOpXAvZUPckFwXYr4jxgxtfOElgH9T5ey7092tP.pdf" target="_blank"
-                                         class="inline-block px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-md no-underline">
-                                         Download Resume
-                                     </a>
-                                 {{-- @endif --}}
-
                                  {{-- Contact Me Button --}}
                                  @if ($portfolio->email)
                                      <a href="mailto:{{ $portfolio->email }}"
@@ -331,6 +323,10 @@
              </section>
          @endif
          <!-- End About Section -->
+
+
+
+
 
 
          <!-- Work Experience Section -->
@@ -393,41 +389,50 @@
              {{-- Section not displayed if no education --}}
          @endforelse
 
-          <!-- Projects Section -->
-          @forelse ($portfolio->projects as $project)
-              <section id="projects" class="section-spacing bg-white">
-                  <div class="container mx-auto px-4 py-8 max-w-7xl">
-                      <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center">Projects</h2>
-                      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"> {{-- Responsive grid for project cards --}}
-                          @foreach ($portfolio->projects as $entry)
-                              <div class="reference-card border p-6 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300"> {{-- Project card styling --}}
-                                  @if ($entry->image_url)
-                                      <img src="{{ asset('storage/' . $entry->image_url) }}" alt="{{ $entry->title }} preview" class="mb-4 rounded-md object-cover h-48 w-full"> {{-- Image styling --}}
-                                  @endif
-                                  <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $entry->title }}</h3>
-                                  @if ($entry->description)
-                                      <p class="text-gray-700 text-sm mb-4">{{ $entry->description }}</p>
-                                  @endif
-                                  <div class="flex flex-wrap gap-3 mt-4"> {{-- Links and technologies container --}}
-                                      @if ($entry->live_demo_url)
-                                          <a href="{{ $entry->live_demo_url }}" target="_blank" class="text-blue-600 hover:underline text-sm font-medium no-underline">Live Demo</a>
-                                      @endif
-                                      @if ($entry->github_url)
-                                          <a href="{{ $entry->github_url }}" target="_blank" class="text-blue-600 hover:underline text-sm font-medium no-underline">GitHub</a>
-                                      @endif
-                                       @if ($entry->technologies)
-                                          <span class="text-gray-500 text-xs mt-2 w-full block">{{ $entry->technologies }}</span> {{-- Technologies below links --}}
-                                      @endif
-                                  </div>
-                              </div>
-                          @endforeach
-                      </div>
-                  </div>
-              </section>
-               @break {{-- Stop after displaying the section once --}}
-          @empty
-              {{-- Section not displayed if no projects --}}
-          @endforelse
+      {{-- Projects Section --}}
+@php
+    $projectCount = $portfolio->projects->count(); // Get count
+@endphp
+
+@if ($projectCount > 0) {{-- Only display section if there's at least one project --}}
+    <section id="projects" class="section-spacing bg-white">
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <h2 class="text-4xl md:text-5xl font-bold mb-16 text-center">Projects</h2>
+
+            @if ($projectCount === 1)
+                {{-- 1 Project Entry: Single column, centered --}}
+                <div class="grid grid-cols-1 gap-8 max-w-sm mx-auto"> {{-- Single column, centered, max-width --}}
+                    @foreach ($portfolio->projects as $entry)
+                         @include('portfolio._project_card', ['entry' => $entry])
+                    @endforeach
+                </div>
+            @elseif ($projectCount === 2)
+                {{-- 2 Project Entries: 2 columns above small, centered on larger --}}
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-lg mx-auto"> {{-- Responsive 2 columns, centered, max-width --}}
+                    @foreach ($portfolio->projects as $entry)
+                         @include('portfolio._project_card', ['entry' => $entry])
+                    @endforeach
+                </div>
+            @elseif ($projectCount === 3)
+                 {{-- 3 Project Entries: 3 columns above small --}}
+                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto"> {{-- Standard responsive 3 columns, centered --}}
+                     @foreach ($portfolio->projects as $entry)
+                          @include('portfolio._project_card', ['entry' => $entry])
+                     @endforeach
+                 </div>
+            @else {{-- 4 or more project entries --}}
+                 {{-- 4+ Project Entries: Responsive grid up to 4 columns --}}
+                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-8"> {{-- Standard responsive grid up to 4 columns --}}
+                     @foreach ($portfolio->projects as $entry)
+                          @include('portfolio._project_card', ['entry' => $entry])
+                     @endforeach
+                 </div>
+            @endif
+
+        </div> {{-- Closing container div --}}
+    </section> {{-- Closing section tag --}}
+@endif {{-- End of if projectCount > 0 --}}
+
 
           <!-- Recommendations Section -->
            @forelse ($portfolio->recommendations as $recommendation)
@@ -510,28 +515,7 @@
            @empty
                 {{-- Section not displayed if no custom sections --}}
            @endforelse
-
-           {{-- Contact Section (Basic - Adapt if needed for more contact methods) --}}
-            @if ($portfolio->email) {{-- Check if email exists as primary contact --}}
-                <section id="contact" class="section-spacing bg-white text-center"> {{-- Center text --}}
-                    <div class="container mx-auto px-4 py-8 max-w-4xl">
-                        <h2>{{ $portfolio->contact_heading ?? 'Get in Touch' }}</h2>
-                        <p class="text-lg text-gray-700 mt-4">Email:
-                             <a href="mailto:{{ $portfolio->email }}" class="text-blue-600 hover:underline no-underline">{{ $portfolio->email }}</a>
-                        </p>
-                        {{-- If you want other contact links (from Online Presences) here instead of Hero: --}}
-                        {{-- <div class="flex flex-wrap justify-center gap-4 mt-4">
-                             @forelse ($portfolio->onlinePresences as $link)
-                                  <a href="{{ $link->url }}" class="text-blue-600 hover:underline text-lg font-semibold no-underline" target="_blank">
-                                     {{ $link->label }}
-                                 </a>
-                             @empty
-                             @endforelse
-                         </div> --}}
-                    </div>
-                </section>
-            @endif
-
+ 
 
     </main>
 

@@ -20,9 +20,9 @@ class Portfolio extends Model
         'landing_page_summary',
         'about_me_heading',
         'about_me_content',
-        'contact_heading',
+ 
         'email',
-        'portfolio_title',
+ 
         'theme_basic',
         'font_basic',
         // REMOVE THESE:

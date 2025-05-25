@@ -44,9 +44,9 @@ public function store(Request $request)
         'landing_page_summary' => 'nullable|string|max:500', // Adjust max length as needed
         'about_me_heading' => 'nullable|string|max:255',
         'about_me_content' => 'nullable|string',
-        'contact_heading' => 'nullable|string|max:255',
+ 
         'email' => 'nullable|email|max:255', // 'nullable' if not required
-        'portfolio_title' => 'nullable|string|max:255',
+ 
         'theme_basic' => 'nullable|string|max:255',
         'font_basic' => 'nullable|string|max:255',
         'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Optional image upload
@@ -145,9 +145,9 @@ Log::info('Attempting to create Portfolio record');
         'landing_page_summary' => $validatedData['landing_page_summary'] ?? null,
         'about_me_heading' => $validatedData['about_me_heading'] ?? null,
         'about_me_content' => $validatedData['about_me_content'] ?? null,
-        'contact_heading' => $validatedData['contact_heading'] ?? null,
+ 
         'email' => $validatedData['email'] ?? null,
-        'portfolio_title' => $validatedData['portfolio_title'] ?? null,
+ 
         'theme_basic' => $validatedData['theme_basic'] ?? null,
         'font_basic' => $validatedData['font_basic'] ?? null,
         'skills_heading' => $validatedData['skills_heading'] ?? null,
